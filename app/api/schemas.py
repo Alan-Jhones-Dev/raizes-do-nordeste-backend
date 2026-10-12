@@ -30,6 +30,13 @@ class CriarPedidoSchema(BaseModel):
     unidade_id: int
     lista_itens: list[ItemPedidoSchema]
 
+    @field_validator('canal', mode = 'before')
+    @classmethod
+    def aumentar_letra_canal(cls, valor):
+        if isinstance(valor, str):
+            return valor.upper()
+        return valor
+
 
 class CriarUnidadeSchema(BaseModel):
     nome: str
@@ -43,6 +50,12 @@ class CriarProdutoSchema(BaseModel):
     descricao:str
     categoria: CategoriaProduto
 
+    @field_validator('categoria', mode = 'before')
+    @classmethod
+    def aumentar_letra_categoria(cls, valor):
+        if isinstance(valor, str):
+            return valor.upper()
+        return valor
 
 class CriarProdutoUnidadeSchema(BaseModel):
     preco: float

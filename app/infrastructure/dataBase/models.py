@@ -100,3 +100,6 @@ class Pagamento(Base):
     valor = Column(Float, nullable=False)
     data_pagamento = Column(DateTime, nullable=False)
     pedido_id = Column(Integer, ForeignKey('pedidos.id'), nullable=False, unique=True)
+
+    #   ERRO 500 AO TENTAR REALZAR O PEDIDO,
+    #   ERRO 500 AO TENTAR REALZAR O PEDIDO,

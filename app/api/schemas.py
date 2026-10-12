@@ -67,3 +67,4 @@ class CriarEstoqueSchema(BaseModel):
     unidade_id: int
     produto_id: int
     quantidade: int
+

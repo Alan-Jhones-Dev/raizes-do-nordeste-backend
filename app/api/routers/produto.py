@@ -5,9 +5,9 @@ from app.infrastructure.dataBase.models import Produto
 from app.api.dependencias import autorizacao_acesso
 from app.infrastructure.dataBase.db import get_db
 
-router_produto = APIRouter()
+router_produto = APIRouter(tags = ['Produtos'])
 
-@router_produto.post('/produto', tags=["produto"])
+@router_produto.post('/produtos')
 async def criar_produto(dados: CriarProdutoSchema, db: Session = Depends(get_db), usuario_logado = Depends(autorizacao_acesso(["GERENTE"]))):
     novo_produto = Produto(
         nome = dados.nome,

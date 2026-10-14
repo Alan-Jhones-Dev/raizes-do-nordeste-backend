@@ -6,8 +6,8 @@ from app.infrastructure.dataBase.models import Produto_Unidade
 
 from app.api.dependencias import autorizacao_acesso
 
-router_produto_unidade = APIRouter()
-@router_produto_unidade.post('/produto-unidades', tags=['produto-unidades'])
+router_produto_unidade = APIRouter(tags = ['Produto-Unidades'])
+@router_produto_unidade.post('/produto-unidades')
 async def criar_produto_unidade(dados: CriarProdutoUnidadeSchema, db: Session = Depends(get_db), usuario_logado = Depends(autorizacao_acesso(['COORDENADOR']))):
     novo_produto_unidade = Produto_Unidade(
         produto_id=dados.produto_id,

@@ -5,9 +5,9 @@ from sqlalchemy.orm import Session
 from app.infrastructure.dataBase.db import get_db
 from app.api.dependencias import autorizacao_acesso
 
-router_unidade = APIRouter()
+router_unidade = APIRouter(tags = ['Unidades'])
 
-@router_unidade.post("/unidade" ,tags= ["unidade"])
+@router_unidade.post("/unidades")
 async def criar_unidade(dados: CriarUnidadeSchema, db: Session = Depends(get_db), usuario_logado = Depends(autorizacao_acesso(["COORDENADOR"]))):
     nova_unidade = Unidade(
         nome=dados.nome,

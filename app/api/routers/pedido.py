@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from app.api.schemas import CriarPedidoSchema
 from sqlalchemy.orm import Session
-from app.api.dependencias import autorizacao_acesso, autenticar_acesso
+from app.api.dependencias import autorizacao_acesso
 from app.infrastructure.dataBase.db import get_db
 from app.infrastructure.dataBase.models import Estoque
 from app.infrastructure.dataBase.models import Pedido
@@ -10,13 +10,14 @@ from app.infrastructure.dataBase.models import StatusPg
 from app.infrastructure.dataBase.models import Produto_Unidade
 from app.infrastructure.dataBase.models import ItemPedido
 from app.infrastructure.dataBase.models import Pagamento
+from app.infrastructure.dataBase.models import CanalPedido
 import random
 from datetime import datetime
 
-router_pedido = APIRouter()
+router_pedido = APIRouter(tags=['Pedidos'])
 
 
-@router_pedido.post("/pedido", tags=["pedido"])
+@router_pedido.post("/pedidos", summary = 'Cadastra um pedido')
 async def criar_novo_pedido(dados: CriarPedidoSchema, db: Session = Depends(get_db), usuario_logado=Depends(autorizacao_acesso(["ATENDENTE", "CLIENTE"]))):
     for item in dados.lista_itens:
         estoque_item = db.query(Estoque).filter(Estoque.produto_id == item.produto_id, Estoque.unidade_id == dados.unidade_id).first()
@@ -27,6 +28,8 @@ async def criar_novo_pedido(dados: CriarPedidoSchema, db: Session = Depends(get_
     valor_total_pedido = 0
     for item in dados.lista_itens:
         preco_produto = db.query(Produto_Unidade).filter(Produto_Unidade.produto_id == item.produto_id, Produto_Unidade.unidade_id == dados.unidade_id).first()
+        if preco_produto is None:
+            raise HTTPException(status_code=404, detail = 'Produto não esta disponivel')
         valor_total_pedido += (preco_produto.preco * item.quantidade)
 
     # INSTANCIANDO UM NOVO PEDIDO E ADICIONANDO NO BANCO
@@ -60,7 +63,11 @@ async def criar_novo_pedido(dados: CriarPedidoSchema, db: Session = Depends(get_
     }
 
 
-@router_pedido.post("/pedido/{id}/pagamento", tags=["pedido-pagamento"])
+@router_pedido.post("/pedidos/{id}/pagamento", summary = 'Processa o pagamento',
+                    description = 'Trata pedidos que não existem; \n'
+                                  'Trata processamentos duplicados; \n'
+                                  'Simula o gateway de pagamento; \n'
+                                  'O estoque só será descontado após aprovação do pagamento;' )
 async def validar_pagamento(id: int, db: Session = Depends(get_db)):
     pagamento_pedido_id = db.query(Pedido).filter(Pedido.id == id).first()
     if not pagamento_pedido_id:
@@ -116,7 +123,7 @@ async def validar_pagamento(id: int, db: Session = Depends(get_db)):
             db.refresh(novo_pagamento_reprovado)
             return novo_pagamento_reprovado
 
-@router_pedido.post("/pedido/{id}/pronto", tags=["pedido-pronto"])
+@router_pedido.post("/pedidos/{id}/pronto", summary = 'Altera o status do pedido')
 async def marcar_como_pronto(id: int, db: Session = Depends(get_db), usuario_logado=Depends(autorizacao_acesso(["COZINHA"]))):
     status_pedido_id = db.query(Pedido).filter(Pedido.id == id).first()
     if not status_pedido_id:
@@ -129,7 +136,7 @@ async def marcar_como_pronto(id: int, db: Session = Depends(get_db), usuario_log
         db.refresh(status_pedido_id)
         return status_pedido_id
 
-@router_pedido.post("/pedido/{id}/entregue", tags=["pedido-entregue"])
+@router_pedido.post("/pedidos/{id}/entregue", summary = 'Altera o status do pedido')
 async def marcar_como_entregue(id: int, db: Session = Depends(get_db), usuario_logado = Depends(autorizacao_acesso(["ATENDENTE"]))):
     status_pedido_id = db.query(Pedido).filter(Pedido.id == id).first()
     if not status_pedido_id:
@@ -142,7 +149,9 @@ async def marcar_como_entregue(id: int, db: Session = Depends(get_db), usuario_l
         db.refresh(status_pedido_id)
         return status_pedido_id
 
-@router_pedido.post("/pedido/{id}/cancelado", tags=["pedido-cancelado"])
+@router_pedido.post("/pedidos/{id}/cancelado", summary = 'Cancela pedido',
+                    description = 'Pedido so pode ser cancelado se estiver em (PAGAMENTO PENDENTE) \n'
+                                  'Trata pedido que nao existe')
 async def marcar_como_cancelado (id: int, db: Session = Depends(get_db), usuario_logado = Depends(autorizacao_acesso(["ATENDENTE", "CLIENTE"])) ):
     status_pedido_id = db.query(Pedido).filter(Pedido.id == id).first()
     if not status_pedido_id:
@@ -155,4 +164,16 @@ async def marcar_como_cancelado (id: int, db: Session = Depends(get_db), usuario
         db.refresh(status_pedido_id)
         return status_pedido_id
 
+@router_pedido.get('/pedidos')
+async def filtrar_canal_pedido (canal: CanalPedido = None,
+                                pagina: int = Query(1,ge = 1),
+                                limite_pagina: int = Query(6, ge=1,le=50),
+                                db: Session = Depends(get_db),
+                                usuario_logado = Depends(autorizacao_acesso(["ATENDENTE", "GERENTE", "COZINHA"]))):
 
+    consulta_filtro = db.query(Pedido)
+    calculo_offset = (pagina-1)*limite_pagina
+    if canal is not None:
+        consulta_filtro =  consulta_filtro.filter(Pedido.canal == canal)
+    consulta_filtro = consulta_filtro.order_by(Pedido.id).offset(calculo_offset).limit(limite_pagina)
+    return consulta_filtro.all()

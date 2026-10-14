@@ -5,9 +5,9 @@ from app.domain.hashes import gerar_hash
 from app.infrastructure.dataBase.models import Usuario
 from app.infrastructure.dataBase.db import get_db
 
-router_usuario = APIRouter()
+router_usuario = APIRouter(tags = ['Usuarios'])
 
-@router_usuario.post("/usuarios", tags=["usuarios"])
+@router_usuario.post("/usuarios")
 async def usuarios(dados:CadastrarUsuarioSchema, db: Session = Depends(get_db)):
     validar_email = db.query(Usuario).filter(Usuario.email == dados.email).first()
     if validar_email:

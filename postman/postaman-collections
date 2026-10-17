@@ -1,0 +1,628 @@
+{
+  "info": {
+    "_postman_id": "5bd6dd7e-6db4-40b7-8145-ea5dd7324103",
+    "name": "RAIZES DO NORDESTE",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55980788",
+    "_collection_link": "https://go.postman.co/collection/55980788-5bd6dd7e-6db4-40b7-8145-ea5dd7324103?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Autenticação e usuário",
+      "item": [
+        {
+          "name": "post-login - 200",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"maria@teste.com\",\r\n    \"senha\":\"senha123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "description": "Causa: usuário passa 'email' e 'senha' cadastrado no sistema\n\nEsperado: 200\n\nO login do usuário acontece normalmente"
+          },
+          "response": []
+        },
+        {
+          "name": "post-cadastrar",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nome\": \"sam\",\r\n  \"email\": \"sam@teste.com\",\r\n  \"senha\": \"senha123\",\r\n  \"perfil\": \"cozinha\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cadastros",
+      "item": [
+        {
+          "name": "post-unidade - 200",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_coordenador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nome\": \"Raizes do Nordeste - Uni 2\",\r\n  \"endereco\": \"rua sao miguel - messejana\",\r\n  \"telefone\": \"777888999\",\r\n  \"regiao\": \"Norte\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/unidades",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "unidades"
+              ]
+            },
+            "description": "Causa: usuário 'coordenador' preencher os campos solicitados\n\nEsperado: 200\n\nUma nova unidade será criadad com um novo id"
+          },
+          "response": []
+        },
+        {
+          "name": "post-estoque",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_gerente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"unidade_id\": 1,\r\n  \"produto_id\": 7,\r\n  \"quantidade\": 10\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/estoques",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "estoques"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post-produto - 200",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_gerente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nome\": \"omelet\",\r\n  \"descricao\": \"ovo, frango, vinagrete\",\r\n  \"categoria\": \"lanche\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/produtos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "produtos"
+              ]
+            },
+            "description": "Causa: usuário 'gerente' preenche todos os campos ecolhendo entre 'lache', 'bebida' e 'sobremesa' no campo 'categoria'\n\nEsperado: 200\n\nO produto será criado com um novo id"
+          },
+          "response": []
+        },
+        {
+          "name": "post-produto-unidades",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_coordenador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"preco\": 7,\r\n  \"unidade_id\": 1,\r\n  \"produto_id\": 7\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/produto-unidades",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "produto-unidades"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pedidos",
+      "item": [
+        {
+          "name": "get-pedidos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/pedidos",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "filtrar canal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_atendente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos?canal=TOTEM",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ],
+              "query": [
+                {
+                  "key": "canal",
+                  "value": "APP",
+                  "disabled": true
+                },
+                {
+                  "key": "canal",
+                  "value": "TOTEM"
+                },
+                {
+                  "key": "canal",
+                  "value": "WEB",
+                  "disabled": true
+                },
+                {
+                  "key": "canal",
+                  "value": "BALCAO",
+                  "disabled": true
+                },
+                {
+                  "key": "pagina",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limite_pagina",
+                  "value": "30",
+                  "disabled": true
+                },
+                {
+                  "key": "canal",
+                  "value": "PICKUP",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post-pedidos - 200",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/pedido",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "pedido"
+              ]
+            },
+            "description": "Causa: usuário 'atendente' ou 'cliente' realiza um pedido com todos os dados coerentes\n\nEsperado: 200\n\nUm pedido deve ser gerado com um id novo"
+          },
+          "response": []
+        },
+        {
+          "name": "pagamento - 200",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos/18/pagamento",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "18",
+                "pagamento"
+              ]
+            },
+            "description": "Causa: pedidos com status de pagamento 'pagamento_pendente', após processados podem vir 'aprovado' ou 'reprovado', essa decisão é sorteada no codigo\n\nEsperado: 200\n\nO pagamento será processado"
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos-pronto",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_cozinha}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos/2/pronto",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "2",
+                "pronto"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos-entregue",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_atendente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos/2/entregue",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "2",
+                "entregue"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pedidos-cancelado - 200",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos/2/cancelado",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "2",
+                "cancelado"
+              ]
+            },
+            "description": "Causa: usuário 'atendente' ou 'cliente' em pedidos com o status de pagamento 'pagamento_pendente'\n\nEsperado: 200\n\nO pedido muda o status do pedido para 'cancelado'"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Erros",
+      "item": [
+        {
+          "name": "filtros inválidos - 422",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_atendente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos?canal=TOTEM",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ],
+              "query": [
+                {
+                  "key": "canal",
+                  "value": "APP",
+                  "disabled": true
+                },
+                {
+                  "key": "canal",
+                  "value": "TOTEM"
+                },
+                {
+                  "key": "canal",
+                  "value": "WEB",
+                  "disabled": true
+                },
+                {
+                  "key": "canal",
+                  "value": "BALCAO",
+                  "disabled": true
+                },
+                {
+                  "key": "pagina",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limite_pagina",
+                  "value": "30",
+                  "disabled": true
+                },
+                {
+                  "key": "canal",
+                  "value": "PICKUP",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Causa: filtros com valores <=0 ou que não estejama no escopo dos parâmetros\n\nEsperado: 422\n\nCausado por dados da requisição inválidos (campo ausente ou valor fora do permitido)"
+          },
+          "response": []
+        },
+        {
+          "name": "pedido nao encontrado - 404",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos/18/pagamento",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "18",
+                "pagamento"
+              ]
+            },
+            "description": "Causa: passar o id do pedido que não existe;\n\nEsperado:404\n\nCausado pela inexistencia do recurso"
+          },
+          "response": []
+        },
+        {
+          "name": "criar pedido sem token - 401",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/pedido",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "pedido"
+              ]
+            },
+            "description": "Causa: criação do pedido sem nenhum token de acesso;\n\nEsperado: 401\n\nCausado pela falta de token de acesso"
+          },
+          "response": []
+        },
+        {
+          "name": "conflito no status do pedido - 409",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_atendente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos/2/entregue",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "2",
+                "entregue"
+              ]
+            },
+            "description": "Causa: status do pedido 'em_preparação' ir direto para 'entregue' sem antes passar pelo 'pronto'\n\nEsperado: 409\n\nCausado pelo estado atual do recurso que não permite a operação da ação"
+          },
+          "response": []
+        },
+        {
+          "name": "restrição de acesso - 403",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_cozinha}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos/2/pronto",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "2",
+                "pronto"
+              ]
+            },
+            "description": "Causa: token 'atendente' na rota da 'cozinha':  \nEsperado: 403\n\nUsuário autenticado com perfil sem permissão"
+          },
+          "response": []
+        }
+      ],
+      "description": "Cenários negativos: cada requisição provoca uma falha esperado e validado com codigo HTTP"
+    }
+  ]
+}
